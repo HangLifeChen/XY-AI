@@ -38,11 +38,10 @@
         </div>
       </header>
       
-       <el-container class="box1">
-            <el-aside>
+       <el-container class="layout-container">
+            <el-aside class="layout-aside">
               <!-- 左侧导航菜单区域 -->
-              <el-menu :width="isCollapse ? '640px' : '200px'" :default-active="getActiveAside()" :collapse="isCollapse"
-                background-color="#22aaee" text-color="#fff" router>
+              <el-menu :width="isCollapse ? '640px' : '300px'" :default-active="getActiveAside()" :collapse="isCollapse" router>
                 <!-- 加了router模式，就会在激活导航时以 :index 作为path进行路径跳转（nb!不用自己写路由了!） -->
                 <!-- 根据不同情况选择menu-item/submenu进行遍历，所以外层套template遍历，里面组件做判断看是否该次遍历到自己 -->
                 <template v-for="item in menuList" :key="item.path">
@@ -55,7 +54,7 @@
                 </template>
               </el-menu>
             </el-aside>
-          <el-container class="mycontainer">
+          <el-container>
     
             <el-main><slot></slot></el-main>
             <footer v-if="!isAgentExecutePage" class="footer">
@@ -88,8 +87,11 @@ import {
   Setting,
   SwitchButton,
   Connection,
-  CreditCard,
-  Message,
+  PieChart,
+  Memo,
+  Collection,
+  Postcard,
+  Dish,
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 const isCollapse = ref(false)
@@ -98,37 +100,37 @@ const menuList = [
   {
     title: '控制台',
     path: '/dashboard',
-    icon: 'pieChart',
+    icon: PieChart,
   },
   {
     title: '数据统计',
     path: '/statistics',
-    icon: 'memo',
+    icon: Memo,
   },
   {
     title: '订单管理',
     path: '/order',
-    icon: 'collection',
+    icon: Collection,
   },
   {
     title: '分类管理',
     path: '/category',
-    icon: 'postcard',
+    icon: Postcard,
   },
   {
     title: '套餐管理',
     path: '/setmeal',
-    icon: 'user',
+    icon: User,
   },
   {
     title: '菜品管理',
     path: '/dish',
-    icon: 'dish',
+    icon: Dish,
   },
   {
     title: '员工管理',
     path: '/employee',
-    icon: 'setting',
+    icon: Setting,
   },
 ]
 
@@ -152,7 +154,6 @@ const isAgentExecutePage = computed(() => {
 })
 
 // 控制侧边栏显示
-const showSidebar = computed(() => route.meta.showSidebar !== false)
 
 // 用户下拉菜单命令处理
 const handleUserCommand = (command : string) => {
@@ -415,6 +416,34 @@ const getActiveAside = () => {
 
 .footer-links a:hover {
   color: var(--primary-color);
+}
+
+/* 侧边栏布局样式 */
+.layout-container {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.layout-aside {
+  width: auto !important;
+  height: auto !important;
+  min-height: calc(100vh - var(--header-height));
+  background-color: var(--background-color-white);
+  border-right: 1px solid var(--border-color-light);
+  box-shadow: var(--box-shadow-base);
+}
+
+.layout-aside .el-menu {
+  height: 100%;
+  border-right: none;
+}
+
+.mycontainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--header-height));
 }
 
 /* 响应式设计 */
