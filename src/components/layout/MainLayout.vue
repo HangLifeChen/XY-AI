@@ -1,58 +1,14 @@
 <template>
   <div class="main-layout">
-    <!-- 顶部导航栏 -->
-    <header v-if="!isAgentExecutePage" class="navbar">
+    <el-container>
+      <header v-if="!isAgentExecutePage" class="navbar">
       <div class="container">
         <router-link to="/" class="logo">
           <span class="logo-icon">
             <el-icon size="35"><Connection /></el-icon>
           </span>
-          <span class="logo-text">小易<span class="logo-highlight">AI</span></span>
+          <span class="logo-text">小易<span class="logo-highlight">AI</span><span class="logo-text">后台管理</span></span>
         </router-link>
-
-        <nav class="nav-links">
-          <router-link v-if="isAuthenticated && showSidebar" to="/agents" class="nav-link">
-            <el-icon><Monitor /></el-icon>
-            <span>智能体</span>
-          </router-link>
-          <router-link v-if="isAuthenticated && showSidebar" to="/workflows" class="nav-link">
-            <el-icon><Operation /></el-icon>
-            <span>工作流</span>
-          </router-link>
-          <router-link v-if="isAuthenticated && showSidebar" to="/tools" class="nav-link">
-            <el-icon><Tools /></el-icon>
-            <span>工具</span>
-          </router-link>
-          <router-link v-if="isAuthenticated && showSidebar" to="/knowledge" class="nav-link">
-            <el-icon><Reading /></el-icon>
-            <span>知识库</span>
-          </router-link>
-          <!-- <router-link v-if="isAuthenticated && showSidebar" to="/templates" class="nav-link">
-            <el-icon><Document /></el-icon>
-            <span>模板</span>
-          </router-link>
-          <router-link v-if="isAuthenticated && showSidebar" to="/cloud-storage" class="nav-link">
-            <el-icon><Cloudy /></el-icon>
-            <span>云存储</span>
-          </router-link> -->
-          <router-link v-if="!isAuthenticated" to="/login" class="nav-link">
-            <el-icon><User /></el-icon>
-            <span>登录</span>
-          </router-link>
-          <router-link v-if="!isAuthenticated" to="/register" class="nav-link">
-            <el-icon><UserFilled /></el-icon>
-            <span>注册</span>
-          </router-link>
-          <router-link v-if="isAuthenticated && showSidebar" to="/mcp-market" class="nav-link">
-            <el-icon><Shop /></el-icon>
-            <span>MCP市场</span>
-          </router-link>
-          <router-link v-if="isAuthenticated && showSidebar" to="/agent-market" class="nav-link">
-            <el-icon><Connection /></el-icon>
-            <span>Agent市场</span>
-          </router-link>
-        </nav>
-
         <div v-if="isAuthenticated" class="user-actions">
           <el-dropdown @command="handleUserCommand">
             <div class="user-profile">
@@ -70,15 +26,7 @@
                 <el-dropdown-item command="settings">
                   <el-icon><Setting /></el-icon>
                   系统设置
-                </el-dropdown-item>
-                <el-dropdown-item command="models">
-                  <el-icon><Connection /></el-icon>
-                  模型管理
-                </el-dropdown-item>
-                <el-dropdown-item command="subscription">
-                  <el-icon><CreditCard /></el-icon>
-                  订阅管理
-                </el-dropdown-item>
+                </el-dropdown-item>            
                 <el-dropdown-item divided command="logout">
                   <el-icon><SwitchButton /></el-icon>
                   退出登录
@@ -90,29 +38,87 @@
       </div>
     </header>
 
-    <!-- 主内容区 -->
-    <div class="content-wrapper">
-      <!-- 内容区域 -->
-      <main class="main-content" :class="{ 'is-centered': centerContent }">
-        <slot />
-      </main>
-    </div>
 
-    <!-- 页脚 -->
-    <footer v-if="!isAgentExecutePage" class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <p class="copyright">© 2025 小易AI. All rights reserved.</p>
-          <div class="footer-links">
-            <a href="#">帮助文档</a>
-            <a href="#">用户协议</a>
-            <a href="#">隐私政策</a>
-          </div>
-        </div>
-      </div>
-    </footer>
+      <el-container>
+        <el-aside width="200px">
+          <el-scrollbar>
+        <el-menu :default-openeds="['1', '3']">
+          <el-sub-menu index="1">
+            <template #title>
+              <el-icon><message /></el-icon>Navigator One
+            </template>
+            <el-menu-item-group>
+              <template #title>Group 1</template>
+              <el-menu-item index="1-1">Option 1</el-menu-item>
+              <el-menu-item index="1-2">Option 2</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group title="Group 2">
+              <el-menu-item index="1-3">Option 3</el-menu-item>
+            </el-menu-item-group>
+            <el-sub-menu index="1-4">
+              <template #title>Option4</template>
+              <el-menu-item index="1-4-1">Option 4-1</el-menu-item>
+            </el-sub-menu>
+          </el-sub-menu>
+          <el-sub-menu index="2">
+            <template #title>
+              <el-icon><icon-menu /></el-icon>Navigator Two
+            </template>
+            <el-menu-item-group>
+              <template #title>Group 1</template>
+              <el-menu-item index="2-1">Option 1</el-menu-item>
+              <el-menu-item index="2-2">Option 2</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group title="Group 2">
+              <el-menu-item index="2-3">Option 3</el-menu-item>
+            </el-menu-item-group>
+            <el-sub-menu index="2-4">
+              <template #title>Option 4</template>
+              <el-menu-item index="2-4-1">Option 4-1</el-menu-item>
+            </el-sub-menu>
+          </el-sub-menu>
+          <el-sub-menu index="3">
+            <template #title>
+              <el-icon><setting /></el-icon>Navigator Three
+            </template>
+            <el-menu-item-group>
+              <template #title>Group 1</template>
+              <el-menu-item index="3-1">Option 1</el-menu-item>
+              <el-menu-item index="3-2">Option 2</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group title="Group 2">
+              <el-menu-item index="3-3">Option 3</el-menu-item>
+            </el-menu-item-group>
+            <el-sub-menu index="3-4">
+              <template #title>Option 4</template>
+              <el-menu-item index="3-4-1">Option 4-1</el-menu-item>
+            </el-sub-menu>
+          </el-sub-menu>
+        </el-menu>
+      </el-scrollbar>
+        </el-aside>
+        <el-container>
+
+          
+          <el-main><slot></slot></el-main>
+           <footer v-if="!isAgentExecutePage" class="footer">
+            <div class="container">
+              <div class="footer-content">
+                <p class="copyright">© 2025 小易AI. All rights reserved.</p>
+                <div class="footer-links">
+                  <a href="#">帮助文档</a>
+                  <a href="#">用户协议</a>
+                  <a href="#">隐私政策</a>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </el-container>
+      </el-container>
+    </el-container>
   </div>
 </template>
+
 
 <script setup>
 import { computed, onMounted } from 'vue'
@@ -124,17 +130,9 @@ import {
   ArrowDown,
   Setting,
   SwitchButton,
-  Avatar,
   Connection,
-  Reading,
-  Document,
-  Tools,
-  Monitor,
-  Operation,
-  Management,
-  Shop,
-  Cloudy,
   CreditCard,
+  Message,
 } from '@element-plus/icons-vue'
 
 const router = useRouter()

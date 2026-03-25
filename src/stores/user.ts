@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', {
     phone: '',
     bio: '',
     avatar: '',
-    isAuthenticated: false,
+    isAuthenticated: true,
     token: '',
     role: '',
     refreshToken: '',
