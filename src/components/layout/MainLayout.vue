@@ -2,117 +2,74 @@
   <div class="main-layout">
     <el-container>
       <header v-if="!isAgentExecutePage" class="navbar">
-      <div class="container">
-        <router-link to="/" class="logo">
-          <span class="logo-icon">
-            <el-icon size="35"><Connection /></el-icon>
-          </span>
-          <span class="logo-text">小易<span class="logo-highlight">AI</span><span class="logo-text">后台管理</span></span>
-        </router-link>
-        <div v-if="isAuthenticated" class="user-actions">
-          <el-dropdown @command="handleUserCommand">
-            <div class="user-profile">
-              <el-avatar v-if="userStore.userInfo.avatar" :size="32" :src="userStore.userInfo.avatar" />
-              <el-avatar v-else :size="32" :icon="UserFilled" />
-              <span class="username">{{ userStore.userInfo.username }}</span>
-              <el-icon><ArrowDown /></el-icon>
-            </div>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="profile">
-                  <el-icon><User /></el-icon>
-                  个人资料
-                </el-dropdown-item>
-                <el-dropdown-item command="settings">
-                  <el-icon><Setting /></el-icon>
-                  系统设置
-                </el-dropdown-item>            
-                <el-dropdown-item divided command="logout">
-                  <el-icon><SwitchButton /></el-icon>
-                  退出登录
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+        <div class="container">
+          <router-link to="/" class="logo">
+            <span class="logo-icon">
+              <el-icon size="35"><Connection /></el-icon>
+            </span>
+            <span class="logo-text">小易<span class="logo-highlight">AI</span><span class="logo-text">后台管理</span></span>
+          </router-link>
+          <div v-if="isAuthenticated" class="user-actions">
+            <el-dropdown @command="handleUserCommand">
+              <div class="user-profile">
+                <el-avatar v-if="userStore.userInfo.avatar" :size="32" :src="userStore.userInfo.avatar" />
+                <el-avatar v-else :size="32" :icon="UserFilled" />
+                <span class="username">{{ userStore.userInfo.username }}</span>
+                <el-icon><ArrowDown /></el-icon>
+              </div>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="profile">
+                    <el-icon><User /></el-icon>
+                    个人资料
+                  </el-dropdown-item>
+                  <el-dropdown-item command="settings">
+                    <el-icon><Setting /></el-icon>
+                    系统设置
+                  </el-dropdown-item>            
+                  <el-dropdown-item divided command="logout">
+                    <el-icon><SwitchButton /></el-icon>
+                    退出登录
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
         </div>
-      </div>
-    </header>
-
-
-      <el-container>
-        <el-aside width="200px">
-          <el-scrollbar>
-        <el-menu :default-openeds="['1', '3']">
-          <el-sub-menu index="1">
-            <template #title>
-              <el-icon><message /></el-icon>Navigator One
-            </template>
-            <el-menu-item-group>
-              <template #title>Group 1</template>
-              <el-menu-item index="1-1">Option 1</el-menu-item>
-              <el-menu-item index="1-2">Option 2</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="Group 2">
-              <el-menu-item index="1-3">Option 3</el-menu-item>
-            </el-menu-item-group>
-            <el-sub-menu index="1-4">
-              <template #title>Option4</template>
-              <el-menu-item index="1-4-1">Option 4-1</el-menu-item>
-            </el-sub-menu>
-          </el-sub-menu>
-          <el-sub-menu index="2">
-            <template #title>
-              <el-icon><icon-menu /></el-icon>Navigator Two
-            </template>
-            <el-menu-item-group>
-              <template #title>Group 1</template>
-              <el-menu-item index="2-1">Option 1</el-menu-item>
-              <el-menu-item index="2-2">Option 2</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="Group 2">
-              <el-menu-item index="2-3">Option 3</el-menu-item>
-            </el-menu-item-group>
-            <el-sub-menu index="2-4">
-              <template #title>Option 4</template>
-              <el-menu-item index="2-4-1">Option 4-1</el-menu-item>
-            </el-sub-menu>
-          </el-sub-menu>
-          <el-sub-menu index="3">
-            <template #title>
-              <el-icon><setting /></el-icon>Navigator Three
-            </template>
-            <el-menu-item-group>
-              <template #title>Group 1</template>
-              <el-menu-item index="3-1">Option 1</el-menu-item>
-              <el-menu-item index="3-2">Option 2</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="Group 2">
-              <el-menu-item index="3-3">Option 3</el-menu-item>
-            </el-menu-item-group>
-            <el-sub-menu index="3-4">
-              <template #title>Option 4</template>
-              <el-menu-item index="3-4-1">Option 4-1</el-menu-item>
-            </el-sub-menu>
-          </el-sub-menu>
-        </el-menu>
-      </el-scrollbar>
-        </el-aside>
-        <el-container>
-
-          
-          <el-main><slot></slot></el-main>
-           <footer v-if="!isAgentExecutePage" class="footer">
-            <div class="container">
-              <div class="footer-content">
-                <p class="copyright">© 2025 小易AI. All rights reserved.</p>
-                <div class="footer-links">
-                  <a href="#">帮助文档</a>
-                  <a href="#">用户协议</a>
-                  <a href="#">隐私政策</a>
+      </header>
+      
+       <el-container class="box1">
+            <el-aside>
+              <!-- 左侧导航菜单区域 -->
+              <el-menu :width="isCollapse ? '640px' : '200px'" :default-active="getActiveAside()" :collapse="isCollapse"
+                background-color="#22aaee" text-color="#fff" router>
+                <!-- 加了router模式，就会在激活导航时以 :index 作为path进行路径跳转（nb!不用自己写路由了!） -->
+                <!-- 根据不同情况选择menu-item/submenu进行遍历，所以外层套template遍历，里面组件做判断看是否该次遍历到自己 -->
+                <template v-for="item in menuList" :key="item.path">
+                  <el-menu-item :index="item.path">
+                    <el-icon>
+                      <component :is="item.icon" />
+                    </el-icon>
+                    <span>{{ item.title }}</span>
+                  </el-menu-item>
+                </template>
+              </el-menu>
+            </el-aside>
+          <el-container class="mycontainer">
+    
+            <el-main><slot></slot></el-main>
+            <footer v-if="!isAgentExecutePage" class="footer">
+              <div class="container">
+                <div class="footer-content">
+                  <p class="copyright">© 2025 小易AI. All rights reserved.</p>
+                  <div class="footer-links">
+                    <a href="#">帮助文档</a>
+                    <a href="#">用户协议</a>
+                    <a href="#">隐私政策</a>
+                  </div>
                 </div>
               </div>
-            </div>
-          </footer>
+            </footer>
         </el-container>
       </el-container>
     </el-container>
@@ -120,7 +77,7 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts" name="layout">
 import { computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -134,6 +91,46 @@ import {
   CreditCard,
   Message,
 } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+const isCollapse = ref(false)
+
+const menuList = [
+  {
+    title: '控制台',
+    path: '/dashboard',
+    icon: 'pieChart',
+  },
+  {
+    title: '数据统计',
+    path: '/statistics',
+    icon: 'memo',
+  },
+  {
+    title: '订单管理',
+    path: '/order',
+    icon: 'collection',
+  },
+  {
+    title: '分类管理',
+    path: '/category',
+    icon: 'postcard',
+  },
+  {
+    title: '套餐管理',
+    path: '/setmeal',
+    icon: 'user',
+  },
+  {
+    title: '菜品管理',
+    path: '/dish',
+    icon: 'dish',
+  },
+  {
+    title: '员工管理',
+    path: '/employee',
+    icon: 'setting',
+  },
+]
 
 const router = useRouter()
 const route = useRoute()
@@ -158,7 +155,7 @@ const isAgentExecutePage = computed(() => {
 const showSidebar = computed(() => route.meta.showSidebar !== false)
 
 // 用户下拉菜单命令处理
-const handleUserCommand = (command) => {
+const handleUserCommand = (command : string) => {
   switch (command) {
     case 'profile':
       // 跳转到个人资料页面
@@ -189,6 +186,12 @@ const logout = () => {
   userStore.logout()
   router.push('/login')
 }
+
+const getActiveAside = () => {
+  console.log('当前路由的路径--------------', route.path)
+  return route.path;
+};
+
 </script>
 
 <style scoped>
