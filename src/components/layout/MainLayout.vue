@@ -39,21 +39,21 @@
       </header>
       
        <el-container class="layout-container">
-            <el-aside class="layout-aside">
-              <!-- 左侧导航菜单区域 -->
-              <el-menu :width="isCollapse ? '640px' : '300px'" :default-active="getActiveAside()" :collapse="isCollapse" router>
-                <!-- 加了router模式，就会在激活导航时以 :index 作为path进行路径跳转（nb!不用自己写路由了!） -->
-                <!-- 根据不同情况选择menu-item/submenu进行遍历，所以外层套template遍历，里面组件做判断看是否该次遍历到自己 -->
-                <template v-for="item in menuList" :key="item.path">
-                  <el-menu-item :index="item.path">
-                    <el-icon>
-                      <component :is="item.icon" />
-                    </el-icon>
-                    <span>{{ item.title }}</span>
-                  </el-menu-item>
-                </template>
-              </el-menu>
-            </el-aside>
+           <el-aside class="layout-aside" width="220px">
+             <!-- 左侧导航菜单区域 -->
+             <el-menu :default-active="getActiveAside()" router>
+               <!-- 加了router模式，就会在激活导航时以 :index 作为path进行路径跳转（nb!不用自己写路由了!） -->
+               <!-- 根据不同情况选择menu-item/submenu进行遍历，所以外层套template遍历，里面组件做判断看是否该次遍历到自己 -->
+               <template v-for="item in menuList" :key="item.path">
+                 <el-menu-item :index="item.path">
+                   <el-icon>
+                     <component :is="item.icon" />
+                   </el-icon>
+                   <span>{{ item.title }}</span>
+                 </el-menu-item>
+               </template>
+             </el-menu>
+           </el-aside>
           <el-container>
     
             <el-main><slot></slot></el-main>
@@ -88,13 +88,12 @@ import {
   SwitchButton,
   Connection,
   PieChart,
-  Memo,
-  Collection,
-  Postcard,
-  Dish,
+  DataAnalysis,
+  Tools,
+  Service,
+  Ticket,
+  FolderOpened,
 } from '@element-plus/icons-vue'
-import { ref } from 'vue'
-const isCollapse = ref(false)
 
 const menuList = [
   {
@@ -105,32 +104,27 @@ const menuList = [
   {
     title: '数据统计',
     path: '/statistics',
-    icon: Memo,
+    icon: DataAnalysis,
   },
   {
-    title: '订单管理',
-    path: '/order',
-    icon: Collection,
+    title: '系统工具管理',
+    path: '/system-tools',
+    icon: Tools,
   },
   {
-    title: '分类管理',
-    path: '/category',
-    icon: Postcard,
+    title: 'A2A机器人管理',
+    path: '/a2a-bot',
+    icon: Service,
   },
   {
-    title: '套餐管理',
-    path: '/setmeal',
-    icon: User,
+    title: '订阅管理',
+    path: '/subscription',
+    icon: Ticket,
   },
   {
-    title: '菜品管理',
-    path: '/dish',
-    icon: Dish,
-  },
-  {
-    title: '员工管理',
-    path: '/employee',
-    icon: Setting,
+    title: '知识库管理',
+    path: '/knowledge-base',
+    icon: FolderOpened,
   },
 ]
 
@@ -426,7 +420,6 @@ const getActiveAside = () => {
 }
 
 .layout-aside {
-  width: auto !important;
   height: auto !important;
   min-height: calc(100vh - var(--header-height));
   background-color: var(--background-color-white);
