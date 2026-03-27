@@ -1,4 +1,4 @@
-<!-- <script lang="ts" setup>
+<script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { getEmployeeByIdAPI, updateEmployeeAPI } from '@/api/employee'
 import { useRouter, useRoute } from 'vue-router'
@@ -225,39 +225,5 @@ init()
 </template>
 
 <style lang="less" scoped>
-h1 {
-  font-size: 20px;
-  text-align: center;
-  margin: 20px;
-}
 
-.el-form {
-  margin-top: 30px;
-  width: 500px;
-  margin: 0 auto;
-}
-
-img {
-  width: 50px;
-  height: 50px;
-  margin-right: 20px;
-}
-
-.btn_box {
-  display: flex;
-  justify-content: center;
-
-
-  .submit_btn {
-    width: 100px;
-    height: 40px;
-    margin: 30px 0 0 400px;
-  }
-
-  .cancel_btn {
-    width: 100px;
-    height: 40px;
-    margin: 30px 0 0 200px;
-  }
-}
-</style> -->
+</style>
