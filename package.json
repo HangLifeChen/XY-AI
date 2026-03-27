@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@vue-flow/core": "^1.48.2",
+    "axios": "^1.13.6",
     "element-plus": "^2.13.6",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
