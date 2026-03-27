@@ -1,55 +1,62 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
-import { getEmployeeByIdAPI, updateEmployeeAPI } from '@/api/employee'
+import { getEmployee, updateEmployee } from '@/api/employee'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import  useUserInfoStore  from '@/stores/userInfo'
+import { useUserStore } from '@/stores/user'
+import { Gender, EmployeeStatus } from '@/types/employee'
+import type { UpdateEmployeeRequest, Employee } from '@/types/employee'
 
 // ------ 数据 ------
-let userInfoStore = useUserInfoStore()
+const userStore = useUserStore()
 
-const formLabelWidth = '60px'
-const id = ref()
-const form = reactive({
-  id: 0,
+const formLabelWidth = '80px'
+const id = ref('')
+const form = reactive<UpdateEmployeeRequest>({
+  id: '',
+  employeeNo: '',
   name: '',
   username: '',
   phone: '',
-  idNumber: '',
-  sex: '',
-  pic: '',
+  email: '',
+  departmentId: '',
+  position: '',
+  hireDate: '',
+  gender: Gender.Unknown,
+  status: EmployeeStatus.Active,
+  remark: '',
 })
-const sexs = [
+const genderOptions = [
   {
-    value: 1,
+    value: Gender.Male,
     label: '男',
   },
   {
-    value: 0,
+    value: Gender.Female,
     label: '女',
+  },
+  {
+    value: Gender.Unknown,
+    label: '未知',
   }
 ]
-const inputRef1 = ref<HTMLInputElement | null>(null)
+const statusOptions = [
+  {
+    value: EmployeeStatus.Active,
+    label: '在职',
+  },
+  {
+    value: EmployeeStatus.Inactive,
+    label: '离职',
+  }
+]
 const updateRef = ref()
 
 // 表单校验
-const checkAge = (rule: any, value: string, callback: (error?: Error) => void) => {
-  if (value === '' || value === undefined) {
-    callback(new Error('请输入年龄'));
-  } else if (!/^\d+$/.test(value)) {
-    callback(new Error('年龄必须为数字'));
-  } else {
-    const age = parseInt(value);
-    if (age < 3) {
-      callback(new Error('年龄不能小于3岁'));
-    } else if (age > 99) {
-      callback(new Error('年龄不能大于99岁'));
-    } else {
-      callback();
-    }
-  }
-}
 const rules = {
+  employeeNo: [
+    { required: true, trigger: 'blur', message: '不能为空' },
+  ],
   name: [
     { required: true, trigger: 'blur', message: '不能为空' },
     { min: 2, message: '姓名长度不能少于2个字符', trigger: 'blur' },
@@ -59,20 +66,11 @@ const rules = {
     { required: true, trigger: 'blur', message: '不能为空' },
     { pattern: /^[a-zA-Z0-9]{1,10}$/, message: '用户名必须是1-10的字母数字', trigger: 'blur' }
   ],
-  password: [
-    { required: true, trigger: 'blur', message: '不能为空' },
-    { pattern: /^\S{6,15}$/, message: '密码必须是6-15的非空字符', trigger: 'blur' }
-  ],
   phone: [
-    { required: true, trigger: 'blur', message: '不能为空' },
     { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
   ],
-  idNumber: [
-    { required: true, trigger: 'blur', message: '不能为空' },
-    // { validator: checkAge, trigger: 'blur'}
-  ],
-  sex: [
-    { required: true, trigger: 'blur', message: '不能为空' },
+  email: [
+    { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
   ],
 }
 
@@ -82,63 +80,23 @@ const rules = {
 const router = useRouter()
 const route = useRoute()
 
-// 选择图片->点击事件->让选择框出现
-const chooseImg = () => {
-  // 模拟点击input框的行为，通过点击按钮触发另一个input框的事件，移花接木
-  // 否则直接调用input框，其样式不太好改    input框中有个inputRef1属性，让inputRef1去click模拟点击行为
-  if (inputRef1.value) {
-    inputRef1.value.click() // 当input框的type是file时，click()方法会触发选择文件的对话框(弹出文件管理器)
-  }
-}
-
-// 在文件管理器中选择图片后触发的改变事件：预览
-const onFileChange1 = (e: Event) => {
-  // 获取用户选择的文件列表（伪数组）
-  console.log(e)
-  const target = e.target as HTMLInputElement
-  const files = target.files;
-  if (files && files.length > 0) {
-    // 选择了图片
-    console.log(files[0])
-    // 文件 -> base64字符串  (可以发给后台)
-    // 1. 创建 FileReader 对象
-    const fr = new FileReader()
-    // 2. 调用 readAsDataURL 函数，读取文件内容
-    fr.readAsDataURL(files[0])
-    // 3. 监听 fr 的 onload 事件，文件转为base64字符串成功后会触发该事件
-    fr.onload = () => {
-      // 4. 通过 e.target.result 获取到读取的结果，值是字符串（base64 格式的字符串）
-      form.pic = fr.result as string
-      console.log('avatar')
-      console.log(form.pic)
-    }
-  }
-}
-
-// 修改员工信息后提交（只有管理员才能对其他员工进行修改，否则普通员工只能对自己进行修改）
+// 修改员工信息后提交
 const submit = async () => {
-  //TODO修改时数据回显
   try {
     const valid = await updateRef.value.validate();
     if (valid) {
       console.log('submit')
       console.log(form)
-      // 在这里执行表单提交操作，比如调用updateUser(form)方法等
-      const res = await updateEmployeeAPI(form)
-      if (res.code == 0) {
-        // 响应拦截器已经用ElMessage打印了错误信息，这里直接return
-        return false
-      }
+      // 在这里执行表单提交操作
+      await updateEmployee(form)
       // 如果修改的是当前用户信息，那么可能会更新当前登录系统员工的账号，即需要更新store的account值
-      console.log('当前userInfo.id')
-      console.log(userInfoStore.info)
-      if (userInfoStore.info && userInfoStore.info.id === form.id) {
-        let { data: employee } = await getEmployeeByIdAPI(form.id)
+      console.log('当前userStore.id')
+      console.log(userStore.userInfo)
+      if (userStore.userInfo && userStore.userInfo.id === form.id) {
+        const employee = await getEmployee(form.id)
         console.log('查询修改后的员工')
         console.log(employee)
-        if (userInfoStore.info) {
-          userInfoStore.info.username = employee.username
-        }
+        userStore.username = employee.username
       }
       // 然后进行 消息提示，页面跳转 等操作
       ElMessage({
@@ -156,7 +114,7 @@ const submit = async () => {
     console.error('执行过程中失败:', error);
   }
 }
-// 取消修改
+// 取消
 const cancel = () => {
   router.push({
     path: '/employee',
@@ -165,15 +123,12 @@ const cancel = () => {
 
 const init = async () => {
   console.log(route.query)
-  if (route.query) {
-    id.value = route.query.id || 0
+  if (route.query && route.query.id) {
+    id.value = route.query.id as string
     form.id = id.value
-    let employee = await getEmployeeByIdAPI(id.value)
-    // 真服了，下面这种常规写法丢失响应式！因为对象重新赋值会分配新的引用地址，其指向的对象是新对象，因此丢失响应式！
-    // form = song.data.data
-    // 重新赋值，不改变引用的写法
+    const employee = await getEmployee(id.value)
     console.log(employee)
-    Object.assign(form, employee.data)
+    Object.assign(form, employee)
     console.log(form)
   } else {
     console.log('没有id')
@@ -188,6 +143,9 @@ init()
   <h1>修改员工页</h1>
   <el-card>
     <el-form :model="form" :rules="rules" ref="updateRef">
+      <el-form-item label="员工编号" :label-width="formLabelWidth" prop="employeeNo">
+        <el-input v-model="form.employeeNo" autocomplete="off" />
+      </el-form-item>
       <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
         <el-input v-model="form.name" autocomplete="off" />
       </el-form-item>
@@ -197,24 +155,36 @@ init()
       <el-form-item label="电话" :label-width="formLabelWidth" prop="phone">
         <el-input v-model="form.phone" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="工号" :label-width="formLabelWidth" prop="idNumber">
-        <el-input v-model="form.idNumber" autocomplete="off" />
+      <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
+        <el-input v-model="form.email" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="性别" :label-width="formLabelWidth" prop="sex">
-        <el-select clearable v-model="form.sex" placeholder="选择分类类型">
-          <el-option v-for="item in sexs" :key="item.value" :label="item.label" :value="item.value" />
+      <el-form-item label="部门ID" :label-width="formLabelWidth" prop="departmentId">
+        <el-input v-model="form.departmentId" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="职位" :label-width="formLabelWidth" prop="position">
+        <el-input v-model="form.position" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="入职日期" :label-width="formLabelWidth" prop="hireDate">
+        <el-date-picker
+          v-model="form.hireDate"
+          type="date"
+          placeholder="选择入职日期"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </el-form-item>
+      <el-form-item label="性别" :label-width="formLabelWidth" prop="gender">
+        <el-select clearable v-model="form.gender" placeholder="选择性别">
+          <el-option v-for="item in genderOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item label="头像" :label-width="formLabelWidth" prop="pic">
-        <img class="the_img" v-if="!form.pic" src="/src/assets/image/user_default.png" alt="" />
-        <img class="the_img" v-else :src="form.pic" alt="" />
-        <input type="file" accept="image/*" style="display: none" ref="inputRef1" @change="onFileChange1" />
-        <el-button type="primary" @click="chooseImg">
-          <el-icon style="font-size: 15px; margin-right: 10px;">
-            <Plus />
-          </el-icon>
-          选择图片
-        </el-button>
+      <el-form-item label="状态" :label-width="formLabelWidth" prop="status">
+        <el-select clearable v-model="form.status" placeholder="选择状态">
+          <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
+        <el-input v-model="form.remark" type="textarea" autocomplete="off" />
       </el-form-item>
     </el-form>
     <el-form-item class="btn_box">
