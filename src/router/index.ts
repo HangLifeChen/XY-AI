@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import HomeView  from '@/views/HomeView.vue'
+import EmployeesView from '@/views/employee/index.vue'
 
 // 常量
 const AUTH_ROUTE_NAMES = ['Login', 'Register']
@@ -37,17 +38,18 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/',
     meta: { requiresAuth: true },
+    redirect: 'dashboard', 
     children: [
       {
-        path: '',
+        path: 'dashboard',
         name: 'Home',
         component: HomeView,
       },
-      // {
-      //   path: 'profile',
-      //   name: 'Profile',
-      //   component: Profile,
-      // },
+      {
+        path: 'employees',
+        name: 'employees',
+        component: EmployeesView,
+      },
       // {
       //   path: 'settings',
       //   name: 'Settings',

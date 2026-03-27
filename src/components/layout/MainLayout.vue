@@ -102,8 +102,8 @@ const menuList = [
     icon: PieChart,
   },
   {
-    title: '数据统计',
-    path: '/statistics',
+    title: '员工管理',
+    path: '/employees',
     icon: DataAnalysis,
   },
   {
