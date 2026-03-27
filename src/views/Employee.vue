@@ -5,27 +5,13 @@ import { getEmployeePageListAPI, updateEmployeeStatusAPI, deleteEmployeeAPI } fr
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-
-// ------ .d.ts 属性类型接口 ------
-interface employee {
-  id: number
-  name: string
-  username: string
-  password:string
-  phone: string
-  age: number
-  sex:string
-  gender: string
-  pic: string
-  status: string
-  updateTime: string
-  createTime: string
-}
+import type { Employee } from '@/types/employee'
+import { EmployeeStatus, Gender } from '@/types/employee'
 
 // ------ 数据 ------
 let userInfoStore = useUserStore()
 // 当前页的员工列表
-const employeeList = ref<employee[]>([])
+const employeeList = ref<Employee[]>([])
 // 带查询的分页参数
 const pageData = reactive({
   name: '',
@@ -40,7 +26,7 @@ const pageData = reactive({
 // 页面初始化，就根据token去获取用户信息，才能实现如果没有token/token过期，刚开始就能够跳转到登录页
 const init = async () => {
   // 参数解构再传进去，因为不用传total
-  const { data: res } = await getEmployeePageListAPI({ page: pageData.page, pageSize: pageData.pageSize, name: pageData.name })
+  const res = await getEmployeePageListAPI({ page: pageData.page, pageSize: pageData.pageSize, name: pageData.name })
   console.log('员工列表')
   console.log(res)
   employeeList.value = res.records
@@ -62,7 +48,7 @@ const handleSizeChange = (val: number) => {
 
 // 修改员工(路径传参，到update页面后，根据id查询员工信息，回显到表单中)
 const router = useRouter()
-const update_btn = (row: any) => {
+const update_btn = (row: Employee) => {
   console.log('要修改的行数据')
   console.log(row)
   router.push({
@@ -74,11 +60,11 @@ const update_btn = (row: any) => {
 }
 
 // 修改员工状态
-const change_btn = async (row: any) => {
+const change_btn = async (row: Employee) => {
   console.log('要修改的行数据')
   console.log(row)
-  const status = row.status === 1 ? 0 : 1
-  await updateEmployeeStatusAPI(row.id,status)
+  const status = row.status === EmployeeStatus.Active ? EmployeeStatus.Inactive : EmployeeStatus.Active
+  await updateEmployeeStatusAPI(row.id, status)
   // 修改后刷新页面，更新数据
   init()
   ElMessage({
@@ -88,7 +74,7 @@ const change_btn = async (row: any) => {
 }
 
 // 删除员工
-const delete_btn = (row: any) => {
+const delete_btn = (row: Employee) => {
   console.log('要删除的行数据')
   console.log(row)
   ElMessageBox.confirm(
@@ -118,6 +104,30 @@ const delete_btn = (row: any) => {
       })
     })
 }
+
+// 获取性别显示文本
+const getGenderText = (gender: Gender) => {
+  switch (gender) {
+    case Gender.Male:
+      return '男'
+    case Gender.Female:
+      return '女'
+    default:
+      return '未知'
+  }
+}
+
+// 获取状态显示文本
+const getStatusText = (status: EmployeeStatus) => {
+  switch (status) {
+    case EmployeeStatus.Active:
+      return '在职'
+    case EmployeeStatus.Inactive:
+      return '离职'
+    default:
+      return '未知'
+  }
+}
 </script>
 
 <template>
@@ -136,32 +146,31 @@ const delete_btn = (row: any) => {
       <el-table-column prop="name" label="姓名" align="center" />
       <el-table-column prop="username" label="账号" align="center" />
       <el-table-column prop="phone" label="手机号" width="120px" align="center" />
-      <el-table-column prop="idNumber" label="工号" align="center" />
-      <el-table-column prop="sex" label="性别" align="center" />
-      <el-table-column prop="pic" label="头像" align="center">
+      <el-table-column prop="employeeNo" label="工号" align="center" />
+      <el-table-column label="性别" align="center">
         <template #default="scope">
-          <img v-if="scope.row.pic" :src="scope.row.pic" alt="" />
-          <img v-else src="/src/assets/image/user_default.png" alt="" />
+          {{ getGenderText(scope.row.gender) }}
         </template>
       </el-table-column>
+      <el-table-column prop="position" label="职位" align="center" />
       <el-table-column prop="status" label="状态" align="center">
         <template #default="scope">
-          <el-tag :type="scope.row.status === 1 ? 'success' : 'danger'" round>
-            {{ scope.row.status === 1 ? '启用' : '禁用' }}
+          <el-tag :type="scope.row.status === EmployeeStatus.Active ? 'success' : 'danger'" round>
+            {{ getStatusText(scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="updateTime" label="上次操作时间" width="120px" align="center" />
+      <el-table-column prop="updatedAt" label="上次操作时间" width="160px" align="center" />
       <el-table-column label="操作" width="200px" align="center">
         <!-- scope 的父组件是 el-table -->
         <template #default="scope">
           <!-- <el-button @click="update_btn(scope.row)" type="primary">修改</el-button> -->
           <el-button @click="update_btn(scope.row)" type="primary" :disabled="userInfoStore.username !== 'gyy'
-            && userInfoStore.username !== scope.row.account ? true : false">修改
+            && userInfoStore.username !== scope.row.username ? true : false">修改
           </el-button>
-          <el-button @click="change_btn(scope.row)" plain :type="scope.row.status === 1 ? 'danger' : 'primary'"
+          <el-button @click="change_btn(scope.row)" plain :type="scope.row.status === EmployeeStatus.Active ? 'danger' : 'primary'"
             :disabled="userInfoStore.username !== 'hzqaq' ? true : false">
-            {{ scope.row.status === 1 ? '禁用' : '启用' }}
+            {{ scope.row.status === EmployeeStatus.Active ? '禁用' : '启用' }}
           </el-button>
           <el-button @click="delete_btn(scope.row)" type="danger"
             :disabled="userInfoStore.username !== 'hzqaq' ? true : false">删除
@@ -224,11 +233,5 @@ body {
   .btn {
     width: 120px;
   }
-}
-
-img {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
 }
 </style>

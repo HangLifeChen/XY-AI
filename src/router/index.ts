@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import HomeView  from '@/views/HomeView.vue'
-import EmployeesView from '@/views/employee/index.vue'
+import EmployeesView from '@/views/Employee.vue'
+import Login from '@/views/Login.vue'
 
 // 常量
 const AUTH_ROUTE_NAMES = ['Login', 'Register']
@@ -10,31 +11,16 @@ const ADMIN_ROUTE_NAMES = ['McpServiceManagement']
 
 // 路由配置
 export const routes: RouteRecordRaw[] = [
-  // {
-  //   path: '/',
-  //   children: [
-  //     {
-  //       path: 'login',
-  //       name: 'Login',
-  //       component: Login,
-  //     },
-  //     {
-  //       path: 'register',
-  //       name: 'Register',
-  //       component: Register,
-  //     },
-  //     {
-  //       path: 'forgot-password',
-  //       name: 'ForgotPassword',
-  //       component: ForgotPassword,
-  //     },
-  //     {
-  //       path: 'unauthorized',
-  //       name: 'Unauthorized',
-  //       component: Unauthorized,
-  //     },
-  //   ],
-  // },
+  {
+    path: '/',
+    children: [
+      {
+        path: 'login',
+        name: 'Login',
+        component: Login,
+      },
+    ],
+  },
   {
     path: '/',
     meta: { requiresAuth: true },
@@ -151,24 +137,24 @@ const router = createRouter({
 })
 
 // 路由守卫
-// router.beforeEach((to, from, next) => {
-//   const userStore = useUserStore()
-//   const isAuthenticated = userStore.isAuthenticated
-//   const userRole = userStore.role || 'user'
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  const isAuthenticated = userStore.isAuthenticated
+  const userRole = userStore.role || 'user'
 
-//   // 检查是否需要认证
-//   if (to.meta.requiresAuth && !isAuthenticated) {
-//     next({ name: 'Login' })
-//     return
-//   }
+  // 检查是否需要认证
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ name: 'Login' })
+    return
+  }
 
-//   // 检查是否需要管理员权限
-//   if (to.meta.requiresAdmin && userRole !== 'admin') {
-//     next({ name: 'Unauthorized' })
-//     return
-//   }
+  // 检查是否需要管理员权限
+  if (to.meta.requiresAdmin && userRole !== 'admin') {
+    next({ name: 'Unauthorized' })
+    return
+  }
 
-//   next()
-// })
+  next()
+})
 
 export default router

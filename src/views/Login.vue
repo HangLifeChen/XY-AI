@@ -37,11 +37,7 @@
           </el-button>
         </el-form-item>
       </el-form>
-      <div class="auth-footer">
-        <el-link type="primary" @click="goToForgotPassword">忘记密码</el-link>
-        <span> | </span>
-        还没有账号？<el-link type="primary" @click="$router.push('/register')">立即注册</el-link>
-      </div>
+
     </el-card>
   </div>
 </template>
