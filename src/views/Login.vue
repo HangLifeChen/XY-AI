@@ -93,7 +93,6 @@ const handleLogin = async () => {
     const data = await login(loginForm.value)
     userStore.setAuthData(data)
     // 登录成功后获取订阅信息
-    await userStore.fetchSubscription()
     ElMessage.success('登录成功')
     router.push(redirectUrl.value as string)
   } catch (error) {

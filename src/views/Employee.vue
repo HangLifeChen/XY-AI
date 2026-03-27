@@ -160,11 +160,11 @@ const delete_btn = (row: any) => {
             && userInfoStore.username !== scope.row.account ? true : false">修改
           </el-button>
           <el-button @click="change_btn(scope.row)" plain :type="scope.row.status === 1 ? 'danger' : 'primary'"
-            :disabled="userInfoStore.username !== 'gyy' ? true : false">
+            :disabled="userInfoStore.username !== 'hzqaq' ? true : false">
             {{ scope.row.status === 1 ? '禁用' : '启用' }}
           </el-button>
           <el-button @click="delete_btn(scope.row)" type="danger"
-            :disabled="userInfoStore.username !== 'gyy' ? true : false">删除
+            :disabled="userInfoStore.username !== 'hzqaq' ? true : false">删除
           </el-button>
         </template>
       </el-table-column>

@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<!-- <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { getEmployeeByIdAPI, updateEmployeeAPI } from '@/api/employee'
 import { useRouter, useRoute } from 'vue-router'
@@ -260,4 +260,4 @@ img {
     margin: 30px 0 0 200px;
   }
 }
-</style>
+</style> -->
